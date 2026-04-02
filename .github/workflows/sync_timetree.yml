@@ -30,8 +30,7 @@ jobs:
           # 這裡確保對應你在 Secrets 設定的名稱
           TIMETREE_COOKIE: ${{ secrets.TIMETREE_COOKIE }}
         run: |
-          # 加上 --verbose 可以讓我們在失敗時看到更多訊息
-          timetree-exporter -c ${{ secrets.CALENDAR_ID }} -o timetree.ics --verbose
+          timetree-exporter -c ${{ secrets.CALENDAR_ID }} -o timetree.ics --email "none" --token "$TIMETREE_COOKIE"
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
