@@ -27,11 +27,11 @@ jobs:
 
       - name: Run Exporter
         env:
-          # 工具會自動去環境變數找 TIMETREE_COOKIE
           TIMETREE_COOKIE: ${{ secrets.TIMETREE_COOKIE }}
+          CALENDAR_ID: ${{ secrets.CALENDAR_ID }}
         run: |
-          # 這裡只傳入必要的 Calendar Code 和輸出檔名
-          timetree-exporter -c ${{ secrets.CALENDAR_ID }} -o timetree.ics -v
+          # 使用新的指令格式，強迫跳過 Email 詢問
+          timetree-exporter -c "$CALENDAR_ID" -o timetree.ics --email "none" --token "$TIMETREE_COOKIE"
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
