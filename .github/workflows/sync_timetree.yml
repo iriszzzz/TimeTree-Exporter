@@ -1,0 +1,39 @@
+name: Sync TimeTree to iCal
+on:
+  schedule:
+    - cron: '0 * * * *' # 每小時跑一次
+  workflow_dispatch: # 允許手動點擊執行
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install TimeTree Exporter
+        run: pip install timetree-exporter
+
+      - name: Run Exporter
+        env:
+          # 這裡對應你在 Secrets 設定的名稱
+          TIMETREE_COOKIE: ${{ secrets.TIMETREE_COOKIE }}
+        run: |
+          # 使用 -c 指定日曆 ID，-o 指定輸出的檔名
+          timetree-exporter -c ${{ secrets.CALENDAR_ID }} -o timetree.ics
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .
+          branch: gh-pages # 檔案會被推送到這個分支
+          target-folder: .
+          git-config-name: github-actions[bot]
+          git-config-email: github-actions[bot]@users.noreply.github.com
